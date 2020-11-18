@@ -6,7 +6,7 @@
 #    By: ezalos <ezalos@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/20 16:46:57 by ezalos            #+#    #+#              #
-#    Updated: 2020/11/17 10:58:03 by ezalos           ###   ########.fr        #
+#    Updated: 2020/11/18 14:56:51 by ezalos           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,16 +23,21 @@ CFLAGS		= -Wall -Werror -Wextra
 # CFLAGS 		+= -fsanitize=address,undefined -g3
 # CFLAGS 		+= -g
 
+ASM_EXT		= .asm
+
 SRCS_DIR	= srcs/
+TUTO_DIR	= tutos/
 TMPL_DIR	= templates/
 HEAD_DIR	= includes/
 OBJS_DIR	= objs/
-OBJS_RBT_DIR	= objs/rbt/
 $(shell mkdir -p $(OBJS_DIR))
-SRCS		= $(wildcard $(SRCS_DIR)*.S)
+SRCS		= $(wildcard $(SRCS_DIR)*$(ASM_EXT))
 TMPL		= $(wildcard $(TMPL_DIR)*.c)
-EXEM		= $(TMPL:%.c=%.S)
-OBJS		= $(SRCS:$(SRCS_DIR)%.S=$(OBJS_DIR)%.o)
+TUTO		= $(wildcard $(TUTO_DIR)*$(ASM_EXT))
+EXEM		= $(TMPL:%.c=%$(ASM_EXT))
+OBJS		= $(SRCS:$(SRCS_DIR)%$(ASM_EXT)=$(OBJS_DIR)%.o)
+TUTOBJ		= $(TUTO:%$(ASM_EXT)=%.o)
+TUTOUT		= $(TUTO:%$(ASM_EXT)=%)
 
 ##########################
 ##						##
@@ -45,17 +50,22 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(AR) $(NAME) $(OBJS)
 
-$(OBJS_DIR)%.o: $(SRCS_DIR)%.S Makefile
+$(OBJS_DIR)%.o: $(SRCS_DIR)%$(ASM_EXT) Makefile
 	$(NS) $< -o $@
 
-$(TESTOR): $(NAME)
+$(TESTOR): $(NAME) main.c
 	$(CC) $(CFLAGS) main.c $(OBJS) -o $(TESTOR) -L. -lASM
 
-$(TMPL_DIR)%.S: $(TMPL_DIR)%.c Makefile
+$(TMPL_DIR)%$(ASM_EXT): $(TMPL_DIR)%.c Makefile
 	$(CC) -S -masm=intel $< -o $@
+
+$(TUTO_DIR)%.o: $(TUTO_DIR)%$(ASM_EXT) Makefile
+	$(NS) $< -o $@
+	gcc -Wall -Wextra -Werror  -g -no-pie -o '$<.out' $@
 
 templates: $(EXEM)
 
+tuto: $(TUTOBJ)
 
 clean:
 	rm -rf $(OBJS)
