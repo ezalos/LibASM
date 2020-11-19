@@ -73,6 +73,6 @@ int				main(int ac, char** av)
 {
 	(void)ac;
 	(void)av;
-	// test_strlen();
-	// test_strcmp();
+	test_strlen();
+	test_strcmp();
 }
