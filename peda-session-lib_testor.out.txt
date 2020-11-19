@@ -1,2 +1,2 @@
-break ft_strcmp
+break ft_strcpy
 

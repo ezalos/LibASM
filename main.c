@@ -4,6 +4,8 @@
 
 extern size_t	ft_strlen(const char *s);
 extern int		ft_strcmp(const char *s1, const char *s2);
+extern int		ft_strcpy(const char *dest, const char *src);
+extern char		*ft_strdup(const char *src);
 
 #define NUMBER_OF_STRING 14
 #define MAX_STRING_SIZE 40
@@ -30,6 +32,8 @@ void			test_strlen(void)
 	size_t		mine;
 	size_t		them;
 	int			i;
+	int			good = 0;
+	int			total = 0;
 
 	printf("%s\n", __func__);
 	i = 0;
@@ -38,9 +42,14 @@ void			test_strlen(void)
 		if ((them = strlen(arr_strlen[i])) != (mine = ft_strlen(arr_strlen[i])))
 			printf("Error   %d, me %zu != %zu it. |%s|\n", i, mine, them, arr_strlen[i]);
 		else
-			printf("Success %d!\n", i);
+		{
+			// printf("Success %d!\n", i);
+			good++;
+		}
 		i++;
+		total++;
 	}
+	printf("\tGood: %d/%d\n", good, total);
 	printf("\n");
 }
 
@@ -50,6 +59,8 @@ void			test_strcmp(void)
 	int			them;
 	int			i;
 	int			j;
+	int			good = 0;
+	int			total = 0;
 
 	printf("%s\n", __func__);
 	i = 0;
@@ -61,11 +72,73 @@ void			test_strcmp(void)
 			if ((them = strcmp(arr_strlen[i], arr_strlen[j])) != (mine = ft_strcmp(arr_strlen[i], arr_strlen[j])))
 				printf("Error   %d-%d, me %d != %d it. \n\t|%s|\n\t|%s|\n", i, j, mine, them, arr_strlen[i], arr_strlen[j]);
 			else
-				printf("Success %d-%d!  ret: %d, \n", i, j, them);
+			{
+				// printf("Success %d-%d!  ret: %d, \n", i, j, them);
+				good++;
+			}
 			j++;
+			total++;
 		}
 		i++;
 	}
+	printf("\tGood: %d/%d\n", good, total);
+	printf("\n");
+}
+
+void			test_strcpy(void)
+{
+	char		*mem;
+	int			them;
+	int			i;
+	int			good = 0;
+	int			total = 0;
+
+	printf("%s\n", __func__);
+	i = 0;
+	while (i < NUMBER_OF_STRING)
+	{
+		mem = malloc(strlen(arr_strlen[i]));
+		ft_strcpy(mem, arr_strlen[i]);
+		if ((them = strcmp(mem, arr_strlen[i])) != 0)
+			printf("Error   %d, cmp: %d.\n\t|%s|\n\t|%s|\n", i, them, arr_strlen[i], mem);
+		else
+		{
+			// printf("Success %d\n", i);
+			good++;
+		}
+		free(mem);
+		i++;
+		total++;
+	}
+	printf("\tGood: %d/%d\n", good, total);
+	printf("\n");
+}
+
+void			test_strdup(void)
+{
+	char		*mem;
+	int			them;
+	int			i;
+	int			good = 0;
+	int			total = 0;
+
+	printf("%s\n", __func__);
+	i = 0;
+	while (i < NUMBER_OF_STRING)
+	{
+		mem = ft_strdup(arr_strlen[i]);
+		if ((them = strcmp(mem, arr_strlen[i])) != 0)
+			printf("Error   %d, cmp: %d.\n\t|%s|\n\t|%s|\n", i, them, arr_strlen[i], mem);
+		else
+		{
+			// printf("Success %d\n", i);
+			good++;
+		}
+		free(mem);
+		i++;
+		total++;
+	}
+	printf("\tGood: %d/%d\n", good, total);
 	printf("\n");
 }
 
@@ -75,4 +148,6 @@ int				main(int ac, char** av)
 	(void)av;
 	test_strlen();
 	test_strcmp();
+	test_strcpy();
+	test_strdup();
 }

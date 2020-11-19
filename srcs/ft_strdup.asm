@@ -1,12 +1,12 @@
 ; **************************************************************************** ;
 ;                                                                              ;
 ;                                                         :::      ::::::::    ;
-;    ft_strcpy.asm                                      :+:      :+:    :+:    ;
+;    ft_strdup.asm                                      :+:      :+:    :+:    ;
 ;                                                     +:+ +:+         +:+      ;
 ;    By: ezalos <ezalos@student.42.fr>              +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
-;    Created: 2020/11/18 16:25:20 by ezalos            #+#    #+#              ;
-;    Updated: 2020/11/19 17:11:47 by ezalos           ###   ########.fr        ;
+;    Created: 2020/11/19 14:56:31 by ezalos            #+#    #+#              ;
+;    Updated: 2020/11/19 17:27:36 by ezalos           ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -54,9 +54,11 @@
 ; GS
 
 
-
+extern ft_strcpy
 extern ft_strlen
-global ft_strcpy ; C function
+extern malloc
+
+global ft_strdup ; C function
 
 ; rbp		old value of start stack, 8 octets
 ; rsp		current stack pointer value
@@ -69,50 +71,41 @@ global ft_strcpy ; C function
 ; dl		scratch register
 ;			tmp ->
 
+;segreg:[base+index*scale+disp]
 section .text
 
-ft_strcpy:
+; ft_malloc:
+; 	mov edi, 40; malloc's first (and only) parameter: number of bytes to allocate
+; 	extern malloc
+; 	call malloc
+; 	; on return, rax points to our newly-allocated memory
+; 	mov ecx,7; set up a constant
+; 	mov [rax],ecx; write it into memory
+; 	mov edx,[rax]; read it back from memory
+; 	mov eax,edx; copy into return value register
+; 	ret
+
+ft_strdup:
     push rbp				; stack += rbp
     mov rbp, rsp			; rbp = rsp
 
-get_len:
-	push RDI				; save RDI bc strlen consume it
-	mov RDI, RSI
-	call ft_strlen
-	inc rax					; we want to include the '\0'
-	mov RCX, RAX			; R10 = ft_strlen(str1)
-	pop RDI					; restore RDI
+	push RDI
 
-startLoop:
-	CLD						;left to right or auto-increment mode
-	REP MOVSB             	;move till cx=0
+	call ft_strlen
+
+	mov RDI, RAX
+
+	call malloc
+	mov RDI, RAX
+
+	pop RSI
+	push RSI
+
+	call ft_strcpy
+	pop RAX
 
 end:
 	mov rsp, rbp
-    pop rbp
-    ret
-
-
-ft_strcpy_hand:
-    push rbp				; stack += rbp
-    mov rbp, rsp			; rbp = rsp
-
-    xor r9, r9				; i = 0;
-	dec r9					; i = -1;
-	jmp startLoop_hand
-
-startLoop_hand:
-	inc r9					; i++;
-
-	xor r8, r8				; i = 0;
-	mov r8b, BYTE[rsi + r9]		; tmp = *(str_1 + i)
-	mov [rdi + r9], r8b			; tmp = *(str_1 + i)
-
-	cmp BYTE[rsi + r9], 0x0				; if (tmp == 0)
-    jne startLoop_hand			; 	checkend
-
-end_hand:
-	;mov rsp, rbp
     pop rbp
 
     ret
