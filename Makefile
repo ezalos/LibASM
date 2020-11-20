@@ -6,7 +6,7 @@
 #    By: ezalos <ezalos@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/20 16:46:57 by ezalos            #+#    #+#              #
-#    Updated: 2020/11/19 17:28:28 by ezalos           ###   ########.fr        #
+#    Updated: 2020/11/20 16:02:45 by ezalos           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,7 +57,7 @@ $(TESTOR): $(NAME) main.c
 	$(CC) $(CFLAGS) main.c $(OBJS) -o $(TESTOR) -L. -lASM
 
 $(TMPL_DIR)%$(ASM_EXT): $(TMPL_DIR)%.c Makefile
-	$(CC) -S -masm=intel $< -o $@
+	$(CC) -S -masm=intel  -no-pie -fno-pie $< -o $@
 
 $(TUTO_DIR)%.o: $(TUTO_DIR)%$(ASM_EXT) Makefile
 	$(NS) $< -o $@
